@@ -1,0 +1,93 @@
+import { Injectable } from '@nestjs/common';
+import { DataSource } from 'typeorm';
+import { User } from '../entities/user.entity';
+import { UpdateUserDto } from './dto/updateUser.dto';
+import { CreateUserDto } from './dto/createUser.dto';
+import * as bcrypt from 'bcryptjs';
+import { UserRepository } from './user.repository';
+import { TodoRepository } from '../todo/todo.repository';
+
+@Injectable()
+export class UserService {
+  constructor(
+    private readonly dataSource: DataSource,
+    private readonly userRepository: UserRepository,
+    private readonly todoRepository: TodoRepository,
+  ) {}
+
+  async createUser(createUserDto: CreateUserDto): Promise<void> {
+    await this.dataSource.manager.transaction(
+      async (transactionalEntityManager) => {
+        const salt = await bcrypt.genSalt(10);
+        createUserDto.password = await bcrypt.hash(
+          createUserDto.password,
+          salt,
+        );
+        await this.userRepository.createUser(
+          createUserDto,
+          transactionalEntityManager,
+        );
+      },
+    );
+  }
+
+  async findAllUser(): Promise<User[]> {
+    return await this.dataSource.manager.transaction(
+      async (transactionalEntityManager) => {
+        return await this.userRepository.findAllUser(
+          transactionalEntityManager,
+        );
+      },
+    );
+  }
+
+  async findOne(id: string): Promise<User> {
+    return await this.dataSource.manager.transaction(
+      async (transactionalEntityManager) => {
+        return await this.userRepository.findOne(
+          id,
+          transactionalEntityManager,
+        );
+      },
+    );
+  }
+
+  async findUseremail(email: string): Promise<User> {
+    return await this.dataSource.manager.transaction(
+      async (transactionalEntityManager) => {
+        return await this.userRepository.findUseremail(
+          email,
+          transactionalEntityManager,
+        );
+      },
+    );
+  }
+
+  async updateUser(param, updateUserDto: UpdateUserDto): Promise<User> {
+    return await this.dataSource.manager.transaction(
+      async (transactionalEntityManager) => {
+        const salt = await bcrypt.genSalt(10);
+        updateUserDto.password = await bcrypt.hash(
+          updateUserDto.password,
+          salt,
+        );
+        return await this.userRepository.updateUser(
+          param,
+          updateUserDto,
+          transactionalEntityManager,
+        );
+      },
+    );
+  }
+
+  async deleteUser(userId: string): Promise<void> {
+    await this.dataSource.manager.transaction(
+      async (transactionalEntityManager) => {
+        await this.userRepository.deleteUser(
+          userId,
+          transactionalEntityManager,
+        );
+      },
+    );
+  }
+}
