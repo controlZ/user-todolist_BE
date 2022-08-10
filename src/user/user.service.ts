@@ -5,14 +5,12 @@ import { UpdateUserDto } from './dto/updateUser.dto';
 import { CreateUserDto } from './dto/createUser.dto';
 import * as bcrypt from 'bcryptjs';
 import { UserRepository } from './user.repository';
-import { TodoRepository } from '../todo/todo.repository';
 
 @Injectable()
 export class UserService {
   constructor(
     private readonly dataSource: DataSource,
     private readonly userRepository: UserRepository,
-    private readonly todoRepository: TodoRepository,
   ) {}
 
   async createUser(createUserDto: CreateUserDto): Promise<void> {
