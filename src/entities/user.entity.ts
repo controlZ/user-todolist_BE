@@ -9,7 +9,7 @@ export class User {
   @Column('varchar')
   username: string;
 
-  @Column('varchar')
+  @Column('varchar', { unique: true })
   email: string;
 
   @Column('varchar')

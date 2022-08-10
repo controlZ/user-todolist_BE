@@ -41,13 +41,13 @@ export class UserRepository {
   }
 
   async updateUser(
-    param,
+    userId: string,
     updateUserDto: UpdateUserDto,
     transactionalEntityManager: EntityManager,
   ): Promise<User> {
     const userRepository = transactionalEntityManager.getRepository(User);
     const userUpdate = await userRepository.findOne({
-      where: { id: param.userId },
+      where: { id: userId },
     });
 
     if (
@@ -57,7 +57,7 @@ export class UserRepository {
     ) {
       throw new HttpException(
         '최소 하나의 값이 필요합니다',
-        HttpStatus.FORBIDDEN,
+        HttpStatus.BAD_REQUEST,
       );
     }
 

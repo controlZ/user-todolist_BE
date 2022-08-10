@@ -61,7 +61,10 @@ export class UserService {
     );
   }
 
-  async updateUser(param, updateUserDto: UpdateUserDto): Promise<User> {
+  async updateUser(
+    userId: string,
+    updateUserDto: UpdateUserDto,
+  ): Promise<User> {
     return await this.dataSource.manager.transaction(
       async (transactionalEntityManager) => {
         const salt = await bcrypt.genSalt(10);
@@ -70,7 +73,7 @@ export class UserService {
           salt,
         );
         return await this.userRepository.updateUser(
-          param,
+          userId,
           updateUserDto,
           transactionalEntityManager,
         );

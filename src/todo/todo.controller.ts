@@ -38,8 +38,9 @@ export class TodoController {
   }
 
   @Put(':todoId')
-  async updateisDone(@Param('todoId') todoId: string): Promise<void> {
+  async updateisDone(@Param('todoId') todoId: string): Promise<any> {
     await this.todoService.updateisDone(todoId);
+    return { message: 'updated successfully' };
   }
 
   @Delete(':todoId')

@@ -28,16 +28,16 @@ export class UserController {
   }
 
   @Get(':userId')
-  async getUsername(@Param('username') id: string): Promise<User> {
+  async getUsername(@Param('userId') id: string): Promise<User> {
     return await this.userService.findOne(id);
   }
 
   @Put(':userId')
   async updateUser(
-    @Param() param: { userId: string },
+    @Param() userId: string,
     @Body() updateUserDto: UpdateUserDto,
   ): Promise<User> {
-    return await this.userService.updateUser(param, updateUserDto);
+    return await this.userService.updateUser(userId, updateUserDto);
   }
 
   @Delete(':userId')
