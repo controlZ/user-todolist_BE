@@ -26,6 +26,18 @@ export class TodoRepository {
     return Todolist;
   }
 
+  async findUserTodo(
+    userId: string,
+    transactionalEntityManager: EntityManager,
+  ): Promise<User> {
+    const userRepository = transactionalEntityManager.getRepository(User);
+    const userTodo = await userRepository.findOne({
+      relations: { todos: true },
+      where: { id: userId },
+    });
+    return userTodo;
+  }
+
   async updateisDone(
     id: string,
     transactionalEntityManager: EntityManager,

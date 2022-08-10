@@ -34,6 +34,17 @@ export class TodoService {
     );
   }
 
+  async findUserTodo(userId: string): Promise<User> {
+    return await this.dataSource.manager.transaction(
+      async (transactionalEntityManager) => {
+        return await this.todoRepository.findUserTodo(
+          userId,
+          transactionalEntityManager,
+        );
+      },
+    );
+  }
+
   async updateisDone(id: string): Promise<void> {
     await this.dataSource.manager.transaction(
       async (transactionalEntityManager) => {

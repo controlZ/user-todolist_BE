@@ -6,15 +6,12 @@ import {
   Put,
   Param,
   Delete,
-  Request,
-  UseGuards,
 } from '@nestjs/common';
 import { CreateTodoDto } from './dto/createTodo.dto';
 import { TodoService } from './todo.service';
 import { Todo } from '../entities/todo.entity';
 import { UserService } from '../user/user.service';
-import { AuthService } from '../auth/auth.service';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { User } from '../entities/user.entity';
 
 @Controller('todo')
 export class TodoController {
@@ -33,6 +30,11 @@ export class TodoController {
   @Get()
   async getTodos(): Promise<Todo[]> {
     return await this.todoService.findAllTodo();
+  }
+
+  @Get(':todoId')
+  async getUsername(@Param('todoId') todoId: string): Promise<User> {
+    return await this.todoService.findUserTodo(todoId);
   }
 
   @Put(':todoId')
