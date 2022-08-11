@@ -5,7 +5,7 @@ import { PassportModule } from '@nestjs/passport';
 import { AuthService } from './auth.service';
 import { LocalStrategy } from './passport/local.strategy';
 import { JwtModule } from '@nestjs/jwt';
-import { JwtStrategy } from './passport/jwt.strategy';
+import { JwtAccessStrategy } from './passport/jwt-access.strategy';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TodoRepository } from '../todo/todo.repository';
 import { UserRepository } from '../user/user.repository';
@@ -18,9 +18,11 @@ import { UserRepository } from '../user/user.repository';
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: async (configService: ConfigService) => ({
-        secret: configService.get('JWT_SECRET'),
+        secret: configService.get('JWT_ACCESS_TOKEN_SECRET'),
         signOptions: {
-          expiresIn: `${configService.get('JWT_EXPIRATION_TIME')}d`,
+          expiresIn: `${configService.get(
+            'JWT_ACCESS_TOKEN__EXPIRATION_TIME',
+          )}s`,
         },
       }),
     }),
@@ -28,7 +30,7 @@ import { UserRepository } from '../user/user.repository';
   providers: [
     AuthService,
     LocalStrategy,
-    JwtStrategy,
+    JwtAccessStrategy,
     TodoRepository,
     UserRepository,
   ],

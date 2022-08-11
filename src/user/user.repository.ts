@@ -3,6 +3,7 @@ import { CreateUserDto } from './dto/createUser.dto';
 import { EntityManager } from 'typeorm';
 import { User } from '../entities/user.entity';
 import { UpdateUserDto } from './dto/updateUser.dto';
+import * as bcrypt from 'bcryptjs';
 
 @Injectable()
 export class UserRepository {
@@ -74,5 +75,41 @@ export class UserRepository {
   ): Promise<void> {
     const userRepository = transactionalEntityManager.getRepository(User);
     await userRepository.delete(userId);
+  }
+
+  async setCurrentRefreshToken(
+    refreshToken: string,
+    id: string,
+    transactionalEntityManager: EntityManager,
+  ) {
+    const userRepository = transactionalEntityManager.getRepository(User);
+    const currentHashedRefreshToken = await bcrypt.hash(refreshToken, 10);
+    await userRepository.update(id, { currentHashedRefreshToken });
+  }
+
+  async getUserIfRefreshTokenMatches(
+    refreshToken: string,
+    id: string,
+    transactionalEntityManager: EntityManager,
+  ) {
+    const userRepository = transactionalEntityManager.getRepository(User);
+    const user = await userRepository.findOne({ where: { id: id } });
+
+    const isRefreshTokenMatching = await bcrypt.compare(
+      refreshToken,
+      user.currentHashedRefreshToken,
+    );
+
+    if (isRefreshTokenMatching) {
+      return user;
+    }
+  }
+
+  async removeRefreshToken(
+    id: string,
+    transactionalEntityManager: EntityManager,
+  ) {
+    const userRepository = transactionalEntityManager.getRepository(User);
+    return userRepository.update(id, { currentHashedRefreshToken: null });
   }
 }

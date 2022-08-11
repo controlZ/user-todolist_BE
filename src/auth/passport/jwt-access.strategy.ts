@@ -8,7 +8,10 @@ import { DataSource } from 'typeorm';
 import { Validate } from '../../type/validate';
 
 @Injectable()
-export class JwtStrategy extends PassportStrategy(Strategy) {
+export class JwtAccessStrategy extends PassportStrategy(
+  Strategy,
+  'jwt-access-token',
+) {
   constructor(
     private readonly configService: ConfigService,
     private readonly todoRepository: TodoRepository,
@@ -18,7 +21,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
-      secretOrKey: configService.get('JWT_SECRET'),
+      secretOrKey: configService.get('JWT_ACCESS_TOKEN_SECRET'),
     });
   }
 

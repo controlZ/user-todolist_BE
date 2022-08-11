@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { DataSource } from 'typeorm';
+import { DataSource, EntityManager } from 'typeorm';
 import { User } from '../entities/user.entity';
 import { UpdateUserDto } from './dto/updateUser.dto';
 import { CreateUserDto } from './dto/createUser.dto';
-import * as bcrypt from 'bcryptjs';
 import { UserRepository } from './user.repository';
+import * as bcrypt from 'bcryptjs';
 
 @Injectable()
 export class UserService {
@@ -86,6 +86,29 @@ export class UserService {
       async (transactionalEntityManager) => {
         await this.userRepository.deleteUser(
           userId,
+          transactionalEntityManager,
+        );
+      },
+    );
+  }
+
+  async setCurrentRefreshToken(refreshToken: string, id: string) {
+    await this.dataSource.manager.transaction(
+      async (transactionalEntityManager) => {
+        await this.userRepository.setCurrentRefreshToken(
+          refreshToken,
+          id,
+          transactionalEntityManager,
+        );
+      },
+    );
+  }
+
+  async removeRefreshToken(id: string) {
+    await this.dataSource.manager.transaction(
+      async (transactionalEntityManager) => {
+        await this.userRepository.removeRefreshToken(
+          id,
           transactionalEntityManager,
         );
       },

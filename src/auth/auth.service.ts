@@ -5,12 +5,14 @@ import { User } from '../entities/user.entity';
 import * as bcrypt from 'bcryptjs';
 import { Login } from '../type/login';
 import { ValidateUser } from '../type/validateUser';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AuthService {
   constructor(
-    private userService: UserService,
-    private jwtService: JwtService,
+    private readonly userService: UserService,
+    private readonly jwtService: JwtService,
+    private readonly configService: ConfigService,
   ) {}
 
   async validateUser(
@@ -28,5 +30,60 @@ export class AuthService {
   async login(user: User): Promise<Login> {
     const payload = { sub: user.id };
     return { access_token: this.jwtService.sign(payload) };
+  }
+
+  getCookieWithJwtAccessToken(id: string) {
+    const payload = { id };
+    const token = this.jwtService.sign(payload, {
+      secret: this.configService.get('JWT_ACCESS_TOKEN_SECRET'),
+      expiresIn: `${this.configService.get(
+        'JWT_ACCESS_TOKEN__EXPIRATION_TIME',
+      )}s`,
+    });
+    return {
+      accessToken: token,
+      domain: 'localhost',
+      path: '/',
+      httpOnly: true,
+      maxAge:
+        Number(this.configService.get('JWT_ACCESS_TOKEN__EXPIRATION_TIME')) *
+        1000,
+    };
+  }
+
+  getCookieWithJwtRefreshToken(id: string) {
+    const payload = { id };
+    const token = this.jwtService.sign(payload, {
+      secret: this.configService.get('JWT_REFRESH_TOKEN_SECRET'),
+      expiresIn: `${this.configService.get(
+        'JWT_REFRESH_TOKEN__EXPIRATION_TIME',
+      )}s`,
+    });
+    return {
+      refreshToken: token,
+      domain: 'localhost',
+      path: '/',
+      httpOnly: true,
+      maxAge:
+        Number(this.configService.get('JWT_REFRESH_TOKEN__EXPIRATION_TIME')) *
+        1000,
+    };
+  }
+
+  getCookiesForLogOut() {
+    return {
+      accessOption: {
+        domain: 'localhost',
+        path: '/',
+        httpOnly: true,
+        maxAge: 0,
+      },
+      refreshOption: {
+        domain: 'localhost',
+        path: '/',
+        httpOnly: true,
+        maxAge: 0,
+      },
+    };
   }
 }
