@@ -23,7 +23,7 @@ export class AuthController {
   ) {}
 
   @UseGuards(LocalAuthGuard)
-  @Post(':login')
+  @Post('login')
   async login(@Req() req, @Res({ passthrough: true }) res: Response) {
     const user = req.user;
     const { accessToken, ...accessOption } =
@@ -41,13 +41,13 @@ export class AuthController {
   }
 
   @UseGuards(JwtAccessGuard)
-  @Get(':usertodo')
+  @Get('usertodo')
   getUserTodo(@Request() req): Promise<Validate> {
     return req.user;
   }
 
   @UseGuards(JwtRefreshGuard)
-  @Get(':refresh')
+  @Get('refresh')
   refresh(@Req() req, @Res({ passthrough: true }) res: Response) {
     const user = req.user;
     const { accessToken, ...accessOption } =
@@ -57,7 +57,7 @@ export class AuthController {
   }
 
   @UseGuards(JwtRefreshGuard)
-  @Post(':logout')
+  @Post('logout')
   async logOut(@Req() req, @Res({ passthrough: true }) res: Response) {
     const { accessOption, refreshOption } =
       this.authService.getCookiesForLogOut();

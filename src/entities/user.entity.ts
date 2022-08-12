@@ -18,7 +18,7 @@ export class User {
 
   @Column({ nullable: true })
   @Exclude()
-  currentHashedRefreshToken?: string;
+  currentHashedRefreshToken: string;
 
   @OneToMany((type) => Todo, (todo) => todo.user, { cascade: true })
   todos: Todo[];

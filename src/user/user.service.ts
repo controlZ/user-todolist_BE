@@ -95,9 +95,9 @@ export class UserService {
     );
   }
   async getUserIfRefreshTokenMatches(refreshToken: string, id: string) {
-    await this.dataSource.manager.transaction(
+    return await this.dataSource.manager.transaction(
       async (transactionalEntityManager) => {
-        await this.userRepository.getUserIfRefreshTokenMatches(
+        return await this.userRepository.getUserIfRefreshTokenMatches(
           refreshToken,
           id,
           transactionalEntityManager,
