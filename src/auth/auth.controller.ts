@@ -8,12 +8,10 @@ import {
   Req,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { JwtAuthGuard } from './jwt-auth.guard';
+import { JwtAccessGuard } from './jwt-access.guard';
 import { LocalAuthGuard } from './local-auth.guard';
-import { DataSource } from 'typeorm';
 import { Validate } from '../type/validate';
 import { UserService } from '../user/user.service';
-import { UserRepository } from '../user/user.repository';
 import { Response } from 'express';
 import { JwtRefreshGuard } from './jwt-refresh.guard';
 
@@ -25,7 +23,7 @@ export class AuthController {
   ) {}
 
   @UseGuards(LocalAuthGuard)
-  @Post('login')
+  @Post(':login')
   async login(@Req() req, @Res({ passthrough: true }) res: Response) {
     const user = req.user;
     const { accessToken, ...accessOption } =
@@ -42,14 +40,24 @@ export class AuthController {
     return user;
   }
 
-  @UseGuards(JwtAuthGuard)
-  @Get('/usertodo')
+  @UseGuards(JwtAccessGuard)
+  @Get(':usertodo')
   getUserTodo(@Request() req): Promise<Validate> {
     return req.user;
   }
 
   @UseGuards(JwtRefreshGuard)
-  @Post('logout')
+  @Get(':refresh')
+  refresh(@Req() req, @Res({ passthrough: true }) res: Response) {
+    const user = req.user;
+    const { accessToken, ...accessOption } =
+      this.authService.getCookieWithJwtAccessToken(user.id);
+    res.cookie('Authentication', accessToken, accessOption);
+    return user;
+  }
+
+  @UseGuards(JwtRefreshGuard)
+  @Post(':logout')
   async logOut(@Req() req, @Res({ passthrough: true }) res: Response) {
     const { accessOption, refreshOption } =
       this.authService.getCookiesForLogOut();
@@ -58,15 +66,5 @@ export class AuthController {
 
     res.cookie('Authentication', '', accessOption);
     res.cookie('Refresh', '', refreshOption);
-  }
-
-  @UseGuards(JwtRefreshGuard)
-  @Get('refresh')
-  refresh(@Req() req, @Res({ passthrough: true }) res: Response) {
-    const user = req.user;
-    const { accessToken, ...accessOption } =
-      this.authService.getCookieWithJwtAccessToken(user.id);
-    res.cookie('Authentication', accessToken, accessOption);
-    return user;
   }
 }

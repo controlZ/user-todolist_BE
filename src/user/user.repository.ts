@@ -23,7 +23,7 @@ export class UserRepository {
     return Userlist;
   }
 
-  async findOne(
+  async findUserWithId(
     id: string,
     transactionalEntityManager: EntityManager,
   ): Promise<User> {
@@ -32,7 +32,7 @@ export class UserRepository {
     return user;
   }
 
-  async findUseremail(
+  async findUserWithEmail(
     email: string,
     transactionalEntityManager: EntityManager,
   ): Promise<User> {
@@ -64,7 +64,7 @@ export class UserRepository {
 
     userUpdate.username = updateUserDto.username;
     userUpdate.email = updateUserDto.email;
-    userUpdate.password = updateUserDto.password;
+    userUpdate.password = await bcrypt.hash(updateUserDto.password, 10);
 
     return userRepository.save(userUpdate);
   }

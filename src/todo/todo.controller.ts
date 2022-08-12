@@ -22,7 +22,7 @@ export class TodoController {
 
   @Post()
   async createTodo(@Body() createTodoDto: CreateTodoDto): Promise<any> {
-    const user = await this.userService.findOne(createTodoDto.id);
+    const user = await this.userService.findUserWithId(createTodoDto.id);
     await this.todoService.createTodo(user, createTodoDto);
     return { message: 'created successfully' };
   }

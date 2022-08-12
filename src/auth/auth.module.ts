@@ -9,6 +9,7 @@ import { JwtAccessStrategy } from './passport/jwt-access.strategy';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TodoRepository } from '../todo/todo.repository';
 import { UserRepository } from '../user/user.repository';
+import { JwtRefreshStrategy } from './passport/jwt-refresh.strategy';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { UserRepository } from '../user/user.repository';
     AuthService,
     LocalStrategy,
     JwtAccessStrategy,
+    JwtRefreshStrategy,
     TodoRepository,
     UserRepository,
   ],

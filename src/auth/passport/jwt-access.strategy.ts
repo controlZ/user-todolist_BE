@@ -19,8 +19,11 @@ export class JwtAccessStrategy extends PassportStrategy(
     private readonly dataSource: DataSource,
   ) {
     super({
-      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-      ignoreExpiration: false,
+      jwtFromRequest: ExtractJwt.fromExtractors([
+        (request) => {
+          return request?.cookies?.Authentication;
+        },
+      ]),
       secretOrKey: configService.get('JWT_ACCESS_TOKEN_SECRET'),
     });
   }
@@ -29,7 +32,7 @@ export class JwtAccessStrategy extends PassportStrategy(
     return await this.dataSource.manager.transaction(
       async (transactionalEntityManager) => {
         const Usertodos = await this.todoRepository.findUserTodo(
-          payload.sub,
+          payload.id,
           transactionalEntityManager,
         );
 

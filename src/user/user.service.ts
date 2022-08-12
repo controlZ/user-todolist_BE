@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { DataSource, EntityManager } from 'typeorm';
+import { DataSource } from 'typeorm';
 import { User } from '../entities/user.entity';
 import { UpdateUserDto } from './dto/updateUser.dto';
 import { CreateUserDto } from './dto/createUser.dto';
@@ -16,11 +16,7 @@ export class UserService {
   async createUser(createUserDto: CreateUserDto): Promise<void> {
     await this.dataSource.manager.transaction(
       async (transactionalEntityManager) => {
-        const salt = await bcrypt.genSalt(10);
-        createUserDto.password = await bcrypt.hash(
-          createUserDto.password,
-          salt,
-        );
+        createUserDto.password = await bcrypt.hash(createUserDto.password, 10);
         await this.userRepository.createUser(
           createUserDto,
           transactionalEntityManager,
@@ -39,10 +35,10 @@ export class UserService {
     );
   }
 
-  async findOne(id: string): Promise<User> {
+  async findUserWithId(id: string): Promise<User> {
     return await this.dataSource.manager.transaction(
       async (transactionalEntityManager) => {
-        return await this.userRepository.findOne(
+        return await this.userRepository.findUserWithId(
           id,
           transactionalEntityManager,
         );
@@ -50,10 +46,10 @@ export class UserService {
     );
   }
 
-  async findUseremail(email: string): Promise<User> {
+  async findUserWithEmail(email: string): Promise<User> {
     return await this.dataSource.manager.transaction(
       async (transactionalEntityManager) => {
-        return await this.userRepository.findUseremail(
+        return await this.userRepository.findUserWithEmail(
           email,
           transactionalEntityManager,
         );
@@ -67,11 +63,6 @@ export class UserService {
   ): Promise<User> {
     return await this.dataSource.manager.transaction(
       async (transactionalEntityManager) => {
-        const salt = await bcrypt.genSalt(10);
-        updateUserDto.password = await bcrypt.hash(
-          updateUserDto.password,
-          salt,
-        );
         return await this.userRepository.updateUser(
           userId,
           updateUserDto,
@@ -103,7 +94,17 @@ export class UserService {
       },
     );
   }
-
+  async getUserIfRefreshTokenMatches(refreshToken: string, id: string) {
+    await this.dataSource.manager.transaction(
+      async (transactionalEntityManager) => {
+        await this.userRepository.getUserIfRefreshTokenMatches(
+          refreshToken,
+          id,
+          transactionalEntityManager,
+        );
+      },
+    );
+  }
   async removeRefreshToken(id: string) {
     await this.dataSource.manager.transaction(
       async (transactionalEntityManager) => {

@@ -29,12 +29,12 @@ export class UserController {
 
   @Get(':userId')
   async getUsername(@Param('userId') id: string): Promise<User> {
-    return await this.userService.findOne(id);
+    return await this.userService.findUserWithId(id);
   }
 
   @Put(':userId')
   async updateUser(
-    @Param() userId: string,
+    @Param('userId') userId: string,
     @Body() updateUserDto: UpdateUserDto,
   ): Promise<User> {
     return await this.userService.updateUser(userId, updateUserDto);

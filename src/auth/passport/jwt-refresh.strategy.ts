@@ -3,8 +3,6 @@ import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { ConfigService } from '@nestjs/config';
 import { UserService } from '../../user/user.service';
-import { EntityManager } from 'typeorm';
-import { UserRepository } from '../../user/user.repository';
 
 @Injectable()
 export class JwtRefreshStrategy extends PassportStrategy(
@@ -14,7 +12,6 @@ export class JwtRefreshStrategy extends PassportStrategy(
   constructor(
     private readonly configService: ConfigService,
     private readonly userService: UserService,
-    private readonly userRepository: UserRepository,
   ) {
     super({
       jwtFromRequest: ExtractJwt.fromExtractors([
@@ -27,12 +24,11 @@ export class JwtRefreshStrategy extends PassportStrategy(
     });
   }
 
-  async validate(req, payload: any, transactionalEntityManager: EntityManager) {
+  async validate(req, payload: any) {
     const refreshToken = req.cookies?.Refresh;
-    return this.userRepository.getUserIfRefreshTokenMatches(
+    return this.userService.getUserIfRefreshTokenMatches(
       refreshToken,
       payload.id,
-      transactionalEntityManager,
     );
   }
 }
