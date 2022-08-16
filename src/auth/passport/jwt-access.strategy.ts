@@ -5,7 +5,7 @@ import { ConfigService } from '@nestjs/config';
 import { TodoRepository } from '../../todo/todo.repository';
 import { UserRepository } from '../../user/user.repository';
 import { DataSource } from 'typeorm';
-import { Validate } from '../../type/validate';
+import { todos } from '../../type/todos';
 
 @Injectable()
 export class JwtAccessStrategy extends PassportStrategy(
@@ -28,7 +28,7 @@ export class JwtAccessStrategy extends PassportStrategy(
     });
   }
 
-  async validate(payload: any): Promise<Validate> {
+  async validate(payload: any): Promise<todos> {
     return await this.dataSource.manager.transaction(
       async (transactionalEntityManager) => {
         const Usertodos = await this.todoRepository.findUserTodo(

@@ -2,9 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { UserService } from '../user/user.service';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcryptjs';
-import { ValidateUser } from '../type/validateUser';
+import { User } from '../type/user';
 import { ConfigService } from '@nestjs/config';
-import { GetAccessToken, GetRefreshToken, Option } from '../type/auth';
+import { AccessToken, RefreshToken, Option } from '../type/auth';
 
 @Injectable()
 export class AuthService {
@@ -14,10 +14,7 @@ export class AuthService {
     private readonly configService: ConfigService,
   ) {}
 
-  async validateUser(
-    userEmail: string,
-    password: string,
-  ): Promise<ValidateUser> {
+  async validateUser(userEmail: string, password: string): Promise<User> {
     const user = await this.userService.findUserWithEmail(userEmail);
     if (user && (await bcrypt.compare(password, user.password))) {
       const { password, ...result } = user;
@@ -26,7 +23,7 @@ export class AuthService {
     return null;
   }
 
-  async getCookieWithJwtAccessToken(id: string): Promise<GetAccessToken> {
+  async getCookieWithJwtAccessToken(id: string): Promise<AccessToken> {
     const payload = { id };
     const token: string = this.jwtService.sign(payload, {
       secret: this.configService.get('JWT_ACCESS_TOKEN_SECRET'),
@@ -45,7 +42,7 @@ export class AuthService {
     };
   }
 
-  async getCookieWithJwtRefreshToken(id: string): Promise<GetRefreshToken> {
+  async getCookieWithJwtRefreshToken(id: string): Promise<RefreshToken> {
     const payload = { id };
     const token = this.jwtService.sign(payload, {
       secret: this.configService.get('JWT_REFRESH_TOKEN_SECRET'),

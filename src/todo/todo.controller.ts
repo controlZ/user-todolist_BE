@@ -12,6 +12,7 @@ import { TodoService } from './todo.service';
 import { Todo } from '../entities/todo.entity';
 import { UserService } from '../user/user.service';
 import { User } from '../entities/user.entity';
+import { Message } from '../type/message';
 
 @Controller('todo')
 export class TodoController {
@@ -21,7 +22,7 @@ export class TodoController {
   ) {}
 
   @Post()
-  async createTodo(@Body() createTodoDto: CreateTodoDto): Promise<any> {
+  async createTodo(@Body() createTodoDto: CreateTodoDto): Promise<Message> {
     const user = await this.userService.findUserWithId(createTodoDto.id);
     await this.todoService.createTodo(user, createTodoDto);
     return { message: 'created successfully' };
@@ -38,13 +39,13 @@ export class TodoController {
   }
 
   @Put(':todoId')
-  async updateisDone(@Param('todoId') todoId: string): Promise<any> {
+  async updateisDone(@Param('todoId') todoId: string): Promise<Message> {
     await this.todoService.updateisDone(todoId);
     return { message: 'updated successfully' };
   }
 
   @Delete(':todoId')
-  async deleteTodo(@Param('todoId') todoId: string): Promise<any> {
+  async deleteTodo(@Param('todoId') todoId: string): Promise<Message> {
     await this.todoService.deleteTodo(todoId);
     return { message: 'deleted successfully' };
   }

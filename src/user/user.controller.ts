@@ -11,13 +11,14 @@ import { UserService } from './user.service';
 import { CreateUserDto } from './dto/createUser.dto';
 import { UpdateUserDto } from './dto/updateUser.dto';
 import { User } from '../entities/user.entity';
+import { Message } from '../type/message';
 
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Post('join')
-  async createUser(@Body() createUserDto: CreateUserDto): Promise<any> {
+  async createUser(@Body() createUserDto: CreateUserDto): Promise<Message> {
     await this.userService.createUser(createUserDto);
     return { message: 'created successfully' };
   }
@@ -41,7 +42,7 @@ export class UserController {
   }
 
   @Delete(':userId')
-  async deleteUser(@Param('userId') userId: string): Promise<any> {
+  async deleteUser(@Param('userId') userId: string): Promise<Message> {
     await this.userService.deleteUser(userId);
     return { message: 'deleted successfully' };
   }

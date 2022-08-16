@@ -1,4 +1,4 @@
-export interface GetAccessToken {
+export interface AccessToken {
   accessToken: string;
   domain: string;
   path: string;
@@ -6,7 +6,7 @@ export interface GetAccessToken {
   maxAge: number;
 }
 
-export interface GetRefreshToken {
+export interface RefreshToken {
   refreshToken: string;
   domain: string;
   path: string;

@@ -10,11 +10,11 @@ import {
 import { AuthService } from './auth.service';
 import { JwtAccessGuard } from './jwt-access.guard';
 import { LocalAuthGuard } from './local-auth.guard';
-import { Validate } from '../type/validate';
 import { UserService } from '../user/user.service';
 import { Response } from 'express';
 import { JwtRefreshGuard } from './jwt-refresh.guard';
 import { User } from '../entities/user.entity';
+import { todos } from '../type/todos';
 
 @Controller('auth')
 export class AuthController {
@@ -46,7 +46,7 @@ export class AuthController {
 
   @UseGuards(JwtAccessGuard)
   @Get('usertodo')
-  getUserTodo(@Request() req): Promise<Validate> {
+  getUserTodo(@Request() req): Promise<todos> {
     return req.user;
   }
 

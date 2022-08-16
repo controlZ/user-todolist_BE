@@ -1,5 +1,5 @@
 import { Todo } from '../entities/todo.entity';
 
-export interface Validate {
+export interface todos {
   todos: Todo[];
 }
