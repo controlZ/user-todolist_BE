@@ -83,7 +83,10 @@ export class UserService {
     );
   }
 
-  async setCurrentRefreshToken(refreshToken: string, id: string) {
+  async setCurrentRefreshToken(
+    refreshToken: string,
+    id: string,
+  ): Promise<void> {
     await this.dataSource.manager.transaction(
       async (transactionalEntityManager) => {
         await this.userRepository.setCurrentRefreshToken(
@@ -94,7 +97,10 @@ export class UserService {
       },
     );
   }
-  async getUserIfRefreshTokenMatches(refreshToken: string, id: string) {
+  async getUserIfRefreshTokenMatches(
+    refreshToken: string,
+    id: string,
+  ): Promise<User> {
     return await this.dataSource.manager.transaction(
       async (transactionalEntityManager) => {
         return await this.userRepository.getUserIfRefreshTokenMatches(
@@ -105,7 +111,7 @@ export class UserService {
       },
     );
   }
-  async removeRefreshToken(id: string) {
+  async removeRefreshToken(id: string): Promise<void> {
     await this.dataSource.manager.transaction(
       async (transactionalEntityManager) => {
         await this.userRepository.removeRefreshToken(

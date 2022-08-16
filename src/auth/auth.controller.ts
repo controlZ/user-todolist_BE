@@ -14,6 +14,7 @@ import { Validate } from '../type/validate';
 import { UserService } from '../user/user.service';
 import { Response } from 'express';
 import { JwtRefreshGuard } from './jwt-refresh.guard';
+import { User } from '../entities/user.entity';
 
 @Controller('auth')
 export class AuthController {
@@ -24,13 +25,16 @@ export class AuthController {
 
   @UseGuards(LocalAuthGuard)
   @Post('login')
-  async login(@Req() req, @Res({ passthrough: true }) res: Response) {
+  async login(
+    @Req() req,
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<User> {
     const user = req.user;
     const { accessToken, ...accessOption } =
-      this.authService.getCookieWithJwtAccessToken(user.id);
+      await this.authService.getCookieWithJwtAccessToken(user.id);
 
     const { refreshToken, ...refreshOption } =
-      this.authService.getCookieWithJwtRefreshToken(user.id);
+      await this.authService.getCookieWithJwtRefreshToken(user.id);
 
     await this.userService.setCurrentRefreshToken(refreshToken, user.id);
 
@@ -48,19 +52,25 @@ export class AuthController {
 
   @UseGuards(JwtRefreshGuard)
   @Get('refresh')
-  refresh(@Req() req, @Res({ passthrough: true }) res: Response) {
+  async refresh(
+    @Req() req,
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<User> {
     const user = req.user;
     const { accessToken, ...accessOption } =
-      this.authService.getCookieWithJwtAccessToken(user.id);
+      await this.authService.getCookieWithJwtAccessToken(user.id);
     res.cookie('Authentication', accessToken, accessOption);
     return user;
   }
 
   @UseGuards(JwtRefreshGuard)
   @Post('logout')
-  async logOut(@Req() req, @Res({ passthrough: true }) res: Response) {
+  async logOut(
+    @Req() req,
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<void> {
     const { accessOption, refreshOption } =
-      this.authService.getCookiesForLogOut();
+      await this.authService.getCookiesForLogOut();
 
     await this.userService.removeRefreshToken(req.user.id);
 

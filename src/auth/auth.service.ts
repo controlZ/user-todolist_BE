@@ -4,6 +4,7 @@ import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcryptjs';
 import { ValidateUser } from '../type/validateUser';
 import { ConfigService } from '@nestjs/config';
+import { GetAccessToken, GetRefreshToken, Option } from '../type/auth';
 
 @Injectable()
 export class AuthService {
@@ -25,9 +26,9 @@ export class AuthService {
     return null;
   }
 
-  getCookieWithJwtAccessToken(id: string) {
+  async getCookieWithJwtAccessToken(id: string): Promise<GetAccessToken> {
     const payload = { id };
-    const token = this.jwtService.sign(payload, {
+    const token: string = this.jwtService.sign(payload, {
       secret: this.configService.get('JWT_ACCESS_TOKEN_SECRET'),
       expiresIn: `${this.configService.get(
         'JWT_ACCESS_TOKEN__EXPIRATION_TIME',
@@ -44,7 +45,7 @@ export class AuthService {
     };
   }
 
-  getCookieWithJwtRefreshToken(id: string) {
+  async getCookieWithJwtRefreshToken(id: string): Promise<GetRefreshToken> {
     const payload = { id };
     const token = this.jwtService.sign(payload, {
       secret: this.configService.get('JWT_REFRESH_TOKEN_SECRET'),
@@ -63,7 +64,7 @@ export class AuthService {
     };
   }
 
-  getCookiesForLogOut() {
+  async getCookiesForLogOut(): Promise<Option> {
     return {
       accessOption: {
         domain: 'localhost',

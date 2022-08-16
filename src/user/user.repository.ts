@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/createUser.dto';
-import { EntityManager } from 'typeorm';
+import { EntityManager, UpdateResult } from 'typeorm';
 import { User } from '../entities/user.entity';
 import { UpdateUserDto } from './dto/updateUser.dto';
 import * as bcrypt from 'bcryptjs';
@@ -81,7 +81,7 @@ export class UserRepository {
     refreshToken: string,
     id: string,
     transactionalEntityManager: EntityManager,
-  ) {
+  ): Promise<void> {
     const userRepository = transactionalEntityManager.getRepository(User);
     const currentHashedRefreshToken = await bcrypt.hash(refreshToken, 10);
     await userRepository.update(id, { currentHashedRefreshToken });
@@ -91,7 +91,7 @@ export class UserRepository {
     refreshToken: string,
     id: string,
     transactionalEntityManager: EntityManager,
-  ) {
+  ): Promise<User> {
     const userRepository = transactionalEntityManager.getRepository(User);
     const user = await userRepository.findOne({ where: { id: id } });
 
@@ -108,8 +108,8 @@ export class UserRepository {
   async removeRefreshToken(
     id: string,
     transactionalEntityManager: EntityManager,
-  ) {
+  ): Promise<void> {
     const userRepository = transactionalEntityManager.getRepository(User);
-    return userRepository.update(id, { currentHashedRefreshToken: null });
+    await userRepository.update(id, { currentHashedRefreshToken: null });
   }
 }
