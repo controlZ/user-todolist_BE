@@ -10,6 +10,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TodoRepository } from '../todo/todo.repository';
 import { UserRepository } from '../user/user.repository';
 import { JwtRefreshStrategy } from './passport/jwt-refresh.strategy';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { JwtRefreshStrategy } from './passport/jwt-refresh.strategy';
         },
       }),
     }),
+    TypeOrmModule.forFeature([UserRepository]),
   ],
   providers: [
     AuthService,

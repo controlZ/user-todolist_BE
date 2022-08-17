@@ -10,9 +10,9 @@ export class UserRepository {
   async createUser(
     createUserDto: CreateUserDto,
     transactionalEntityManager: EntityManager,
-  ): Promise<void> {
+  ) {
     const userRepository = transactionalEntityManager.getRepository(User);
-    await userRepository.save(createUserDto);
+    return await userRepository.save(createUserDto);
   }
 
   async findAllUser(
