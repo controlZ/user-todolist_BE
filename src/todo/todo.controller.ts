@@ -33,18 +33,18 @@ export class TodoController {
     return await this.todoService.findAllTodo();
   }
 
-  @Get(':todoId')
+  @Get('todoId')
   async getUsername(@Param('todoId') todoId: string): Promise<User> {
     return await this.todoService.findUserTodo(todoId);
   }
 
-  @Put(':todoId')
+  @Put('todoId')
   async updateisDone(@Param('todoId') todoId: string): Promise<Message> {
     await this.todoService.updateisDone(todoId);
     return { message: 'updated successfully' };
   }
 
-  @Delete(':todoId')
+  @Delete('todoId')
   async deleteTodo(@Param('todoId') todoId: string): Promise<Message> {
     await this.todoService.deleteTodo(todoId);
     return { message: 'deleted successfully' };
