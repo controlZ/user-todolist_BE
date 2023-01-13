@@ -28,12 +28,12 @@ export class UserController {
     return await this.userService.findAllUser();
   }
 
-  @Get('userId')
+  @Get('/:userId')
   async getUsername(@Param('userId') id: string): Promise<User> {
     return await this.userService.findUserWithId(id);
   }
 
-  @Put('userId')
+  @Put('/:userId')
   async updateUser(
     @Param('userId') userId: string,
     @Body() updateUserDto: UpdateUserDto,
@@ -41,7 +41,7 @@ export class UserController {
     return await this.userService.updateUser(userId, updateUserDto);
   }
 
-  @Delete('userId')
+  @Delete('/:userId')
   async deleteUser(@Param('userId') userId: string): Promise<Message> {
     await this.userService.deleteUser(userId);
     return { message: 'deleted successfully' };
