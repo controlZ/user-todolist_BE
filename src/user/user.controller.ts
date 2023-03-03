@@ -17,7 +17,7 @@ import { Message } from '../type/message';
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @Post('join')
+  @Post('register')
   async createUser(@Body() createUserDto: CreateUserDto): Promise<Message> {
     await this.userService.createUser(createUserDto);
     return { message: 'created successfully' };
